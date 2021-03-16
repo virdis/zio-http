@@ -18,6 +18,7 @@ final case class ServerSocketHandler[R](
    */
 
   override def channelRead0(ctx: JChannelHandlerContext, msg: JWebSocketFrame): Unit = {
+    println(s"msg: $msg")
     WebSocketFrame.fromJFrame(msg) match {
       case Some(frame) =>
         zExec.unsafeExecute_(ctx) {
