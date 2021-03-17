@@ -4,18 +4,22 @@ import scala.concurrent.duration.FiniteDuration
 
 import sbt.enablePlugins
 
-Global / scalaVersion := "2.13.3"
-
 // ZIO Version
 val zioVersion       = "1.0.4-2"
 val zioConfigVersion = "1.0.0"
 val circeVersion     = "0.13.0"
+val scala_2_13       = "2.13.3"
+
+lazy val supportedScalaVersions = List(scala_2_13)
+
+Global / scalaVersion := scala_2_13
 
 lazy val root = (project in file("."))
   .settings(
+    skip in publish := true,
     name := "root",
   )
-  .aggregate(zhttp, zhttpBenchmarks)
+  .aggregate(zhttp, zhttpBenchmarks, example)
 
 // Test Configuration
 ThisBuild / libraryDependencies ++=
@@ -33,6 +37,38 @@ ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"
 // Project zio-http
 lazy val zhttp = (project in file("./zio-http"))
   .settings(
+    version := "1.0.0-RC2.1",
+    organization := "io.d11",
+    organizationName := "d11",
+    crossScalaVersions := supportedScalaVersions,
+    licenses += ("MIT License", new URL("https://github.com/dream11/zio-http/blob/master/LICENSE")),
+    homepage in ThisBuild := Some(url("https://github.com/dream11/zio-http")),
+    scmInfo in ThisBuild :=
+      Some(
+        ScmInfo(url("https://github.com/dream11/zio-http"), "scm:git@github.com:dream11/zio-http.git"),
+      ),
+    developers in ThisBuild :=
+      List(
+        Developer(
+          "tusharmath",
+          "Tushar Mathur",
+          "tushar@dream11.com",
+          new URL("https://github.com/tusharmath"),
+        ),
+        Developer(
+          "amitksingh1490",
+          "Amit Kumar Singh",
+          "amit.singh@dream11.com",
+          new URL("https://github.com/amitksingh1490"),
+        ),
+      ),
+    publishMavenStyle in ThisBuild := true,
+    crossPaths in ThisBuild := false,
+    publishTo := {
+      val nexus = "https://s01.oss.sonatype.org/"
+      if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+    },
     libraryDependencies ++=
       Seq(
         "dev.zio" %% "zio"         % zioVersion,
@@ -46,11 +82,20 @@ lazy val zhttpBenchmarks = (project in file("./zio-http-benchmarks"))
   .enablePlugins(JmhPlugin)
   .dependsOn(zhttp)
   .settings(
+    skip in publish := true,
     libraryDependencies ++=
       Seq(
         "dev.zio" %% "zio" % zioVersion,
       ),
   )
+
+lazy val example = (project in file("./example"))
+  .settings(
+    fork := true,
+    skip in publish := true,
+    mainClass in (Compile, run) := Option("HelloWorldAdvanced"),
+  )
+  .dependsOn(zhttp)
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 

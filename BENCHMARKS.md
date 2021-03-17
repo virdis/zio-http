@@ -1,15 +1,35 @@
-# ZIO-HTTP
-## Environment
-**We have used 2 machines**
-1. EC2(C5.4xLarge) 16 vCPUs 32 GB RAM as server
-2. EC2(C5.4xLarge) 16 vCPUs 32 GB RAM as client with wrk setup
+# Table of Contents
 
-## Benchmarks
+- [Table of Contents](#table-of-contents)
+- [Methodology](#methodology)
+- [Benchmarks](#benchmarks)
+  - [ZIO Http](#zio-http)
+  - [Vert.x](#vertx)
+  - [Http4s](#http4s)
+  - [Play](#play)
+  - [Finagle](#finagle)
 
-### ZIO-HTTP
-#### Plain Text
+# Methodology
+
+1. For more realistic benchmarks the client and the server were deployed on different machines, with the following configuration —
+
+   1. EC2(C5.4xLarge) 16 vCPUs 32 GB RAM as **server**.
+   1. EC2(C5.4xLarge) 16 vCPUs 32 GB RAM as **client** with [wrk] setup.
+
+1. After the servers were started they were warmed up using wrk until the results start stabilizing.
+
+[wrk]: https://github.com/wg/wrk
+
+# Benchmarks
+
+## [ZIO Http](https://github.com/dream11/zio-http)
+
+[source code](https://github.com/dream11/zio-http/tree/master/example/src/main/scala/HelloWorldAdvanced.scala)
+
+**Plain Text**
+
 ```dtd
-./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.105.8:8090
+./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.105.8:8090/text
 Running 10s test @ http://10.10.109.3:8090
   12 threads and 1000 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
@@ -24,7 +44,9 @@ Running 10s test @ http://10.10.109.3:8090
 Requests/sec: 719576.04
 Transfer/sec:     34.31MB
 ```
-#### JSON
+
+**JSON**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.105.8:8090/json
 Running 10s test @ http://10.10.109.3:8090/json
@@ -40,8 +62,13 @@ Running 10s test @ http://10.10.109.3:8090/json
   7070158 requests in 10.10s, 660.78MB read
 Requests/sec: 700073.31
 ```
-### Vertx
-#### Plain Text
+
+## [Vert.x](https://vertx.io/)
+
+[source code](https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Scala/vertx-web-scala)
+
+**Plain Text**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:8080/plaintext
 Running 10s test @ http://10.10.109.3:8080/plaintext
@@ -58,7 +85,9 @@ Running 10s test @ http://10.10.109.3:8080/plaintext
 Requests/sec: 707991.69
 Transfer/sec:     87.78MB
 ```
-#### JSON
+
+**JSON**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:8080/json
 Running 10s test @ http://10.10.109.3:8080/json
@@ -75,8 +104,13 @@ Running 10s test @ http://10.10.109.3:8080/json
 Requests/sec: 644854.27
 Transfer/sec:     92.86MB
 ```
-### Http4s
-#### Plain Text
+
+## [Http4s](https://github.com/http4s/http4s)
+
+[source code](https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Scala/http4s)
+
+**Plain Text**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:8080/plaintext
 Running 10s test @ http://10.10.109.3:8080/plaintext
@@ -93,7 +127,9 @@ Running 10s test @ http://10.10.109.3:8080/plaintext
 Requests/sec: 139573.98
 Transfer/sec:     20.10MB
 ```
-#### JSON
+
+**JSON**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:8080/json
 Running 10s test @ http://10.10.109.3:8080/json
@@ -110,8 +146,13 @@ Running 10s test @ http://10.10.109.3:8080/json
 Requests/sec: 135565.22
 Transfer/sec:     20.17MB
 ```
-### Play2
-#### Plain text
+
+## [Play](https://www.playframework.com/documentation/2.8.x/ScalaHome)
+
+[source code](https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Scala/play2-scala)
+
+**Plain text**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:9000/plaintext
 Running 10s test @ http://10.10.109.3:9000/plaintext
@@ -128,7 +169,9 @@ Running 10s test @ http://10.10.109.3:9000/plaintext
 Requests/sec: 263819.25
 Transfer/sec:     28.93MB
 ```
-#### JSON
+
+**JSON**
+
 ```dtd
 ./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.109.3:9000/json
 Running 10s test @ http://10.10.109.3:9000/json
@@ -144,4 +187,46 @@ Running 10s test @ http://10.10.109.3:9000/json
   2638210 requests in 10.10s, 339.66MB read
 Requests/sec: 261223.68
 Transfer/sec:     33.63MB
+```
+
+## [Finagle](https://twitter.github.io/finagle/)
+
+[source code](https://github.com/TechEmpower/FrameworkBenchmarks/tree/master/frameworks/Scala/finagle)
+
+**Plain Text**
+
+```dtd
+./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.110.217:8080/plaintext
+Running 10s test @ http://10.10.110.217:8080/plaintext
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.74ms  712.71us  22.53ms   83.65%
+    Req/Sec    48.17k     2.11k   69.16k    90.63%
+  Latency Distribution
+     50%    1.54ms
+     75%    1.96ms
+     90%    2.65ms
+     99%    4.22ms
+  5779092 requests in 10.10s, 721.99MB read
+Requests/sec: 572231.69
+Transfer/sec:     71.49MB
+```
+
+**JSON**
+
+```dtd
+./wrk -t12 -c1000 --latency --timeout=10s --duration=10s http://10.10.110.217:8080/json
+Running 10s test @ http://10.10.110.217:8080/json
+  12 threads and 1000 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.77ms  811.08us  32.39ms   88.24%
+    Req/Sec    47.65k     2.36k   59.13k    86.19%
+  Latency Distribution
+     50%    1.54ms
+     75%    2.03ms
+     90%    2.57ms
+     99%    4.39ms
+  5731384 requests in 10.10s, 825.35MB read
+Requests/sec: 567496.97
+Transfer/sec:     81.72MB
 ```
